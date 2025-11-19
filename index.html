@@ -1061,7 +1061,7 @@
                         <div class="tracker-dots">
                             <span class="tracker-dot" data-bubble="0"></span>
                             <span class="tracker-dot" data-bubble="1"></span><span class="tracker-dot" data-bubble="2"></span>
-                            <span class="tracker-dot" data-bubble="3"></span><span class."tracker-dot" data-bubble="4"></span><span class="tracker-dot" data-bubble="5"></span>
+                            <span class="tracker-dot" data-bubble="3"></span><span class="tracker-dot" data-bubble="4"></span><span class="tracker-dot" data-bubble="5"></span>
                             <span class="tracker-dot" data-bubble="6"></span><span class="tracker-dot" data-bubble="7"></span><span class="tracker-dot" data-bubble="8"></span><span class="tracker-dot" data-bubble="9"></span>
                         </div>
                     </td>
@@ -1430,7 +1430,7 @@
             <div class="item-modal-form">
                 <div>
                     <label for="item-modal-name">Item Name</label>
-                    <input type-="text" id="item-modal-name" placeholder="Potion of Healing">
+                    <input type="text" id="item-modal-name" placeholder="Potion of Healing">
                 </div>
                 <div>
                     <label for="item-modal-desc">Description</label>
@@ -2228,6 +2228,30 @@
             // --- Auto-save for name/desc ---
             document.getElementById('char-name').addEventListener('input', saveCharacterToLocal);
             document.getElementById('char-desc').addEventListener('input', saveCharacterToLocal);
+
+            // --- Attach Listeners to Inputs ---
+            scoreInputs.forEach(inputId => {
+                const input = document.getElementById(inputId);
+                if (input) {
+                    input.addEventListener('input', (e) => {
+                        const iconId = iconMap[e.target.id];
+                        const iconEl = document.getElementById(iconId);
+                        
+                        if (e.target.id.startsWith('attr-score-')) {
+                            updateDiceIcon(e.target, iconEl, 'attribute');
+                        } else {
+                            updateDiceIcon(e.target, iconEl, 'talent');
+                        }
+                        
+                        const idParts = e.target.id.split('-');
+                        const attrId = idParts[1] === 'score' ? idParts[2] : idParts[1];
+                        if (attrId && attrToPip[attrId]) {
+                            calculateMaxPips(attrId);
+                        }
+                        saveCharacterToLocal(); // Auto-save
+                    });
+                }
+            });
 
 
             initializeTrackers(); // MUST run first to create the trackers object
